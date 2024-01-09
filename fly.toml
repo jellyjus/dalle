@@ -1,0 +1,28 @@
+# fly.toml app configuration file generated for dalle on 2024-01-09T14:10:23+03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "dalle"
+primary_region = "ams"
+
+[build]
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512
+
+[env]
+  PORT = 8080
+  POSTGRES_HOST = "dalle-db.internal"
+  POSTGRES_USER = "postgres"
+  POSTGRES_DATABASE = "dalle"
