@@ -88,7 +88,7 @@ func (s *Service) buildRequest(ctx context.Context, path string, request []byte)
 		return nil, err
 	}
 
-	//req.Header.Set("Authorization", "Bearer "+s.apiKey)
+	req.Header.Set("Authorization", "Bearer "+s.apiKey)
 	req.Header.Set("Content-Type", "application/json")
 
 	return req, nil
