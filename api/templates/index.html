@@ -1,0 +1,119 @@
+<html lang="html">
+    <head>
+        <title>Dalle</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script src="https://unpkg.com/element-plus"></script>
+
+        <style>
+            body {
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            }
+
+            .row {
+                margin: 5px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <el-container>
+                <el-main>
+                    <el-row>
+                        <el-col :xs="{span: 24}" :md="{span: 10, offset: 7}">
+
+                            <img v-if="image" style="width: 100%" :src="image"/>
+                            <el-text v-if="revised_prompt" size="small" style="text-align: center">{{revised_prompt}}</el-text>
+
+                            <el-row class="row" style="margin-top: 20px">
+                                <el-input
+                                        v-model="prompt"
+                                        size="large"
+                                        placeholder="Например: корги позирует стоя на задних лапах в свете софитов"
+                                        :disabled="loading"
+                                        @keyup.enter="submit"
+                                />
+                            </el-row>
+                            <el-row class="row">
+                                <el-button
+                                        type="primary"
+                                        size="large"
+                                        style="width: 100%"
+                                        :disabled="loading"
+                                        @click="submit">
+                                    Generate
+                                </el-button>
+                            </el-row>
+                        </el-col>
+                    </el-row>
+                </el-main>
+            </el-container>
+        </div>
+
+        <script>
+            const request = async (url, data) => {
+                const res = await fetch(url, data)
+                const text = await res.text()
+                if (!res.ok) {
+                    throw new Error(`request ${res.url} failed with code ${res.status} ${text}`)
+                }
+                try {
+                    return JSON.parse(text)
+                } catch (e) {
+                    return text
+                }
+
+            }
+
+            const App = {
+                data() {
+                    return {
+                        image: "",
+                        revised_prompt: "",
+
+                        prompt: "",
+                        loading: false,
+                    };
+                },
+                methods: {
+                    async submit() {
+                        this.loading = true
+                        const loading = ElementPlus.ElLoading.service({
+                            lock: true,
+                            text: 'Generating...',
+                            background: 'rgba(0, 0, 0, 0.7)',
+                        })
+
+                        try {
+                            const res = await request("/api/image/generate", {
+                                method: "POST",
+                                body: JSON.stringify({
+                                    prompt: this.prompt
+                                })
+                            })
+                            this.image = res.url
+                            this.revised_prompt = res.revised_prompt
+
+                            this.prompt = ""
+                        } catch (e) {
+                            console.error(e)
+                            ElementPlus.ElMessage({
+                                showClose: true,
+                                message: e,
+                                type: 'error',
+                                duration: 0
+                            })
+                        } finally {
+                            this.loading = false
+                            loading.close()
+                        }
+                    },
+                }
+            };
+            const app = Vue.createApp(App);
+            app.use(ElementPlus);
+            app.mount("#app");
+        </script>
+    </body>
+</html>

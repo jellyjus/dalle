@@ -71,8 +71,6 @@ func (s *Service) doRequest(ctx context.Context, path string, apiRequest, apiRes
 		return err
 	}
 
-	fmt.Println(string(body))
-
 	if resp.StatusCode >= http.StatusBadRequest {
 		return fmt.Errorf("server error, status code: %d, body: %s", resp.StatusCode, string(body))
 	}

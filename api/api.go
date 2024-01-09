@@ -1,10 +1,12 @@
 package api
 
 import (
+	"dalle/api/templates"
 	"dalle/extapi/openai"
 	"dalle/repository"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/filesystem"
 )
 
 type router struct {
@@ -21,6 +23,10 @@ func ApplyRoutes(app *fiber.App, oai *openai.Service, repo *repository.Repositor
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.SendString("ok")
 	})
+
+	app.Use("/admin", filesystem.New(filesystem.Config{
+		Root: templates.FS,
+	}))
 
 	api := app.Group("/api")
 	image := api.Group("/image")
