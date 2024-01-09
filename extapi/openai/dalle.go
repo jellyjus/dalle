@@ -32,12 +32,17 @@ func New(apiKey string) *Service {
 	}
 }
 
-func (s *Service) GenerateImage(ctx context.Context, prompt string) (entity.Image, error) {
+func (s *Service) GenerateImage(ctx context.Context, prompt string, hd bool) (entity.Image, error) {
+	var quality string
+	if hd {
+		quality = "hd"
+	}
 	req := imageRequest{
-		Model:  "dall-e-3",
-		Prompt: prompt,
-		N:      1,
-		Size:   "1024x1024",
+		Model:   "dall-e-3",
+		Prompt:  prompt,
+		N:       1,
+		Size:    "1024x1024",
+		Quality: quality,
 	}
 	var res imageResponse
 	if err := s.doRequest(ctx, imagePath, req, &res); err != nil {

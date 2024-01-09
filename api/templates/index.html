@@ -26,14 +26,19 @@
                             <img v-if="image" style="width: 100%" :src="image"/>
                             <el-text v-if="revised_prompt" size="small" style="text-align: center">{{revised_prompt}}</el-text>
 
-                            <el-row class="row" style="margin-top: 20px">
-                                <el-input
-                                        v-model="prompt"
-                                        size="large"
-                                        placeholder="Например: корги позирует стоя на задних лапах в свете софитов"
-                                        :disabled="loading"
-                                        @keyup.enter="submit"
-                                />
+                            <el-row class="row" style="margin-top: 20px; align-items: center">
+                                <el-col :span="21">
+                                    <el-input
+                                            v-model="prompt"
+                                            size="large"
+                                            placeholder="Например: корги позирует стоя на задних лапах в свете софитов"
+                                            :disabled="loading"
+                                            @keyup.enter="submit"
+                                    />
+                                </el-col>
+                                <el-col  :span="2" :offset="1">
+                                    <el-checkbox-button v-model="hd" label="HD" size="large" />
+                                </el-col>
                             </el-row>
                             <el-row class="row">
                                 <el-button
@@ -73,6 +78,7 @@
                         revised_prompt: "",
 
                         prompt: "",
+                        hd: false,
                         loading: false,
                     };
                 },
@@ -94,7 +100,8 @@
                             const res = await request("/api/image/generate", {
                                 method: "POST",
                                 body: JSON.stringify({
-                                    prompt: this.prompt
+                                    prompt: this.prompt,
+                                    hd: this.hd,
                                 })
                             })
                             this.image = res.url

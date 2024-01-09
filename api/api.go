@@ -42,7 +42,7 @@ func (r *router) generateImage(c fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	image, err := r.openai.GenerateImage(c.Context(), req.Prompt)
+	image, err := r.openai.GenerateImage(c.Context(), req.Prompt, req.HD)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
