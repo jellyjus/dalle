@@ -78,6 +78,11 @@
                 },
                 methods: {
                     async submit() {
+                        this.prompt = this.prompt.trim()
+                        if (!this.prompt) {
+                            return
+                        }
+
                         this.loading = true
                         const loading = ElementPlus.ElLoading.service({
                             lock: true,
