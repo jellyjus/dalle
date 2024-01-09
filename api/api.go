@@ -18,6 +18,10 @@ func ApplyRoutes(app *fiber.App, oai *openai.Service, repo *repository.Repositor
 		repo:   repo,
 	}
 
+	app.Get("/", func(c fiber.Ctx) error {
+		return c.SendString("ok")
+	})
+
 	api := app.Group("/api")
 	image := api.Group("/image")
 	image.Post("/generate", r.generateImage)
@@ -41,5 +45,5 @@ func (r *router) generateImage(c fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(req)
+	return c.JSON(image)
 }
